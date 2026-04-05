@@ -46,6 +46,7 @@
       v-else-if="type === 'button'">
       <VBtn
         block
+        :loading="loading"
         variant="flat"
         size="large"
         color="primary"
@@ -100,11 +101,12 @@ import { useEventListener } from '@vueuse/core';
 import JIcon from './JIcon.vue';
 import type { JFileUploadExpose } from '#/types';
 
-const { accept, disabled, type, buttonText } = defineProps<{
+const { accept, disabled, type, buttonText, loading } = defineProps<{
   accept?: string;
   disabled?: boolean;
   type: 'button' | 'dropzone';
   buttonText?: string;
+  loading?: boolean;
 }>();
 
 const { t } = useTranslation();

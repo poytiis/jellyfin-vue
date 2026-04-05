@@ -5,22 +5,28 @@
     </template>
     <template #content>
       <VCol md="6">
-        <div class="uno-mb-8 uno-flex">
-          <UserImage size="180" />
+        <div class="uno-mb-10 uno-flex">
+          <UserImage
+            :size="190" />
           <div class="uno-ml-10">
-            <div class="uno-mb-6 uno-text-4xl">
-              poytiis
+            <div class="uno-mb-7 uno-ml-2 uno-text-4xl">
+              {{ remote.auth.currentUser.value?.Name }}
             </div>
             <div class="uno-flex">
               <JFileUpload
+                ref="fileUploadRef"
+                v-model="selectedUserPicture"
+                :loading="isChangeImageLoading"
                 type="button"
-                :button-text="t('editImage')" />
+                :button-text="t('changeImage')"
+                accept="image/*" />
               <VBtn
+                :loading="isDeleteImageLoading"
                 variant="flat"
                 size="large"
                 class="uno-ml-3"
-                color="primary"
-                @click="resetPassword">
+                color="error"
+                @click="deleteUserImage">
                 {{ t('deleteImage') }}
               </VBtn>
             </div>
@@ -30,28 +36,28 @@
           <VTextField
             v-model="currentPassword"
             variant="outlined"
-            autofocus
+            class="uno-mb-2"
             :label="$t('currentPassword')"
-            type="url" />
+            type="password" />
           <VTextField
             v-model="newPassword"
             variant="outlined"
-            autofocus
+            class="uno-mb-2"
             :label="$t('newPassword')"
-            type="url" />
+            type="password" />
           <VTextField
             v-model="repeatNewPassword"
             variant="outlined"
-            autofocus
+            class="uno-mb-2"
             :label="$t('confirmPassword')"
-            type="url" />
+            type="password" />
           <VBtn
+            :loading="isChangePasswordLoading"
             variant="flat"
-            block
             size="large"
             color="primary"
-            @click="resetPassword">
-            {{ t('resetPassword') }}
+            @click="changePassword">
+            {{ t('changePassword') }}
           </VBtn>
         </div>
       </VCol>
@@ -61,16 +67,120 @@
 
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue';
-import { shallowRef } from 'vue';
+import { nextTick, ref, shallowRef, watch } from 'vue';
+import { getImageApi } from '@jellyfin/sdk/lib/utils/api/image-api';
+import { getUserApi } from '@jellyfin/sdk/lib/utils/api/user-api';
+import type { JFileUploadExpose } from '@jellyfin-vue/ui-toolkit/components';
+import type { UserApiUpdateUserPasswordRequest } from '@jellyfin/sdk/lib/generated-client/api/user-api';
+import type { ImageApiPostUserImageRequest } from '@jellyfin/sdk/lib/generated-client/api/image-api';
+import type { AxiosRequestConfig } from 'axios';
+import { remote } from '#/plugins/remote';
+import { useSnackbar } from '#/composables/use-snackbar';
 
 const { t } = useTranslation();
 const currentPassword = shallowRef('');
 const newPassword = shallowRef('');
 const repeatNewPassword = shallowRef('');
+const isChangePasswordLoading = shallowRef(false);
+const isChangeImageLoading = shallowRef(false);
+const isDeleteImageLoading = shallowRef(false);
+const fileUploadRef = ref<JFileUploadExpose | undefined>(undefined);
+const selectedUserPicture = ref<File | undefined>(undefined);
 
 /**
- * Reset user's password
+ * Delete user's profile image
  */
-function resetPassword() {}
+async function deleteUserImage() {
+  isDeleteImageLoading.value = true;
+
+  try {
+    await remote.sdk.newUserApi(getImageApi).deleteUserImage();
+  } catch {
+    useSnackbar(t('failedToDeleteImage'), 'red');
+  } finally {
+    isDeleteImageLoading.value = false;
+  }
+
+  await remote.auth.refreshCurrentUserInfo();
+}
+
+/**
+ * Change user's profile image
+ */
+async function changeUserImage() {
+  if (!selectedUserPicture.value) {
+    useSnackbar(t('failedToReadImage'), 'red');
+
+    return;
+  }
+
+  // According to the TypeScript typings, the SDK expects the body to be a File.
+  // However, sending a File causes the backend to return a 500 error due to a base64 parsing exception.
+  // When the File is converted to a base64 string, the backend works as expected.
+  const base64FileContent = await fileUploadRef.value?.readSelectedFileAsBase64();
+
+  const payload: ImageApiPostUserImageRequest = {
+    userId: remote.auth.currentUserId.value,
+    body: base64FileContent as unknown as File
+  };
+
+  const config: AxiosRequestConfig = {
+    headers: {
+      'Content-Type': selectedUserPicture.value.type
+    }
+  };
+
+  isChangeImageLoading.value = true;
+
+  try {
+    await remote.sdk.newUserApi(getImageApi).postUserImage(payload, config);
+  } catch {
+    useSnackbar(t('failedToChangeImage'), 'red');
+  } finally {
+    isChangeImageLoading.value = false;
+  }
+
+  selectedUserPicture.value = undefined;
+
+  await remote.auth.refreshCurrentUserInfo();
+}
+
+/**
+ * Change user's password
+ */
+async function changePassword() {
+  if (newPassword.value !== repeatNewPassword.value) {
+    useSnackbar(t('newPasswordAndConfirmNewPasswordMustBeTheSame'), 'red');
+
+    return;
+  }
+
+  const payload: UserApiUpdateUserPasswordRequest = {
+    updateUserPassword: {
+      CurrentPw: currentPassword.value,
+      NewPw: newPassword.value
+    }
+  };
+
+  try {
+    isChangePasswordLoading.value = true;
+    await remote.sdk.newUserApi(getUserApi).updateUserPassword(payload);
+    newPassword.value = '';
+    currentPassword.value = '';
+    repeatNewPassword.value = '';
+    useSnackbar(t('passwordChangedSuccesfully'), 'green');
+  } catch {
+    useSnackbar(t('passwordChangeFailed'), 'red');
+  } finally {
+    isChangePasswordLoading.value = false;
+  }
+}
+
+watch(selectedUserPicture, async (newVal) => {
+  if (newVal) {
+    await nextTick();
+    await changeUserImage();
+  }
+});
 
 </script>
