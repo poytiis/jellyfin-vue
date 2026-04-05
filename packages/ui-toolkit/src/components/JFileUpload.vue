@@ -8,6 +8,7 @@
       :disabled="disabled"
       @change="onInputChange">
     <div
+      v-if="type === 'dropzone'"
       :class="[
         'uno-min-h-84 uno-flex uno-flex-col uno-items-center uno-justify-center',
         'uno-border-2 uno-border-dashed uno-rounded-xl uno-p-8 uno-text-center uno-bg-transparent',
@@ -42,12 +43,23 @@
       </div>
     </div>
     <div
+      v-else-if="type === 'button'">
+      <VBtn
+        block
+        variant="flat"
+        size="large"
+        color="primary"
+        @click="onBrowseButtonClick">
+        {{ buttonText ?? t('browseFiles') }}
+      </VBtn>
+    </div>
+    <div
       v-if="errorMessage"
       class="uno-mt-2 uno-text-red">
       {{ errorMessage }}
     </div>
     <div
-      v-if="file"
+      v-if="file && type === 'dropzone'"
       class="uno-flex uno-items-center uno-gap-4 uno-p-3 uno-rounded-lg uno-border
       uno-border-gray-200 uno-bg-transparent uno-mt-6
       dark:uno-border-gray-700">
@@ -72,6 +84,12 @@
         <JIcon class="i-mdi:delete uno-min-w-10" />
       </VBtn>
     </div>
+    <div
+      v-else-if="file && type === 'button'">
+      <div class="uno-font-medium uno-mt-2 uno-ml-2 uno-text-gray-900 dark:uno-text-gray-100 uno-break-all">
+        {{ file.name }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -82,9 +100,11 @@ import { useEventListener } from '@vueuse/core';
 import JIcon from './JIcon.vue';
 import type { JFileUploadExpose } from '#/types';
 
-const { accept, disabled } = defineProps<{
+const { accept, disabled, type, buttonText } = defineProps<{
   accept?: string;
   disabled?: boolean;
+  type: 'button' | 'dropzone';
+  buttonText?: string;
 }>();
 
 const { t } = useTranslation();
