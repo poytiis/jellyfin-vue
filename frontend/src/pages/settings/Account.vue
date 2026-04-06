@@ -5,11 +5,10 @@
     </template>
     <template #content>
       <VCol md="6">
-        <div class="uno-mb-10 uno-flex">
-          <UserImage
-            :size="190" />
-          <div class="uno-ml-10">
-            <div class="uno-mb-7 uno-ml-2 uno-text-4xl">
+        <div class="uno-mb-10 uno-flex uno-flex-col sm:uno-flex-row">
+          <UserImage :size="190" />
+          <div class="sm:uno-ml-10">
+            <div class="uno-mb-7 uno-ml-2 uno-mt-4 uno-text-4xl sm:uno-mt-0">
               {{ remote.auth.currentUser.value?.Name }}
             </div>
             <div class="uno-flex">
@@ -24,7 +23,7 @@
                 :loading="isDeleteImageLoading"
                 variant="flat"
                 size="large"
-                class="uno-ml-3"
+                class="uno-ml-4"
                 color="error"
                 @click="deleteUserImage">
                 {{ t('deleteImage') }}

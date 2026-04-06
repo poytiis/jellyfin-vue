@@ -1,5 +1,5 @@
 <template>
-  <div class="uno-w-full">
+  <div :class="{'uno-w-full' : type === 'dropzone'}">
     <input
       ref="inputRef"
       type="file"
@@ -45,7 +45,6 @@
     <div
       v-else-if="type === 'button'">
       <VBtn
-        block
         :loading="loading"
         variant="flat"
         size="large"
