@@ -4,26 +4,30 @@
       {{ t('account') }}
     </template>
     <template #content>
-      <VCol md="6">
+      <VCol
+        cols="12"
+        md="10"
+        lg="6">
         <div class="uno-mb-10 uno-flex uno-flex-col sm:uno-flex-row">
           <UserImage :size="190" />
           <div class="sm:uno-ml-10">
-            <div class="uno-mb-7 uno-ml-2 uno-mt-4 uno-text-4xl sm:uno-mt-0">
+            <div class="uno-mb-7 uno-ml-2 uno-mt-6 uno-text-4xl sm:uno-mt-0">
               {{ remote.auth.currentUser.value?.Name }}
             </div>
-            <div class="uno-flex">
+            <div class="uno-flex uno-flex-col sm:uno-flex-row">
               <JFileUpload
                 ref="fileUploadRef"
                 v-model="selectedUserPicture"
                 :loading="isChangeImageLoading"
                 type="button"
+                block
                 :button-text="t('changeImage')"
                 accept="image/*" />
               <VBtn
                 :loading="isDeleteImageLoading"
                 variant="flat"
                 size="large"
-                class="uno-ml-4"
+                class="uno-ml-0 uno-mt-6 sm:uno-ml-4 sm:uno-mt-0"
                 color="error"
                 @click="deleteUserImage">
                 {{ t('deleteImage') }}
@@ -52,6 +56,7 @@
             type="password" />
           <VBtn
             :loading="isChangePasswordLoading"
+            :block="$vuetify.display.mobile"
             variant="flat"
             size="large"
             color="primary"
@@ -167,7 +172,7 @@ async function changePassword() {
     newPassword.value = '';
     currentPassword.value = '';
     repeatNewPassword.value = '';
-    useSnackbar(t('passwordChangedSuccesfully'), 'green');
+    useSnackbar(t('passwordChangedSuccessfully'), 'green');
   } catch {
     useSnackbar(t('passwordChangeFailed'), 'red');
   } finally {

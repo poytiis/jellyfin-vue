@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'uno-w-full' : type === 'dropzone'}">
+  <div :class="{'uno-w-full' : type === 'dropzone' || block}">
     <input
       ref="inputRef"
       type="file"
@@ -42,17 +42,17 @@
         </div>
       </div>
     </div>
-    <div
-      v-else-if="type === 'button'">
-      <VBtn
-        :loading="loading"
-        variant="flat"
-        size="large"
-        color="primary"
-        @click="onBrowseButtonClick">
-        {{ buttonText ?? t('browseFiles') }}
-      </VBtn>
-    </div>
+    <VBtn
+      v-if="type === 'button'"
+      :block="block"
+      :loading="loading"
+      variant="flat"
+      size="large"
+      color="primary"
+      @click="onBrowseButtonClick">
+      {{ buttonText ?? t('browseFiles') }}
+    </VBtn>
+
     <div
       v-if="errorMessage"
       class="uno-mt-2 uno-text-red">
@@ -100,12 +100,13 @@ import { useEventListener } from '@vueuse/core';
 import JIcon from './JIcon.vue';
 import type { JFileUploadExpose } from '#/types';
 
-const { accept, disabled, type, buttonText, loading } = defineProps<{
+const { accept, disabled, type, buttonText, loading, block } = defineProps<{
   accept?: string;
   disabled?: boolean;
   type: 'button' | 'dropzone';
   buttonText?: string;
   loading?: boolean;
+  block?: boolean;
 }>();
 
 const { t } = useTranslation();
