@@ -321,6 +321,7 @@
   "rating": "Rating",
   "readTheDocumentation": "Read the documentation",
   "recentlyAdded": "Recently added",
+  "recentlyAddedMedia": "Recently added media",
   "refresh": "Refresh",
   "refreshKeysFailure": "Error refreshing API keys",
   "refreshMetadata": "Refresh metadata",

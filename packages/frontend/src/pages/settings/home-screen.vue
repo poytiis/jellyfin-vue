@@ -32,7 +32,8 @@ const { t } = useTranslation();
 
 const screenSections = computed(() => [
   { text: t('myMedia'), value: 'smalllibrarytiles' },
-  { text: t('myMediaSmall'), value: 'librarybuttons' }
+  { text: t('myMediaSmall'), value: 'librarybuttons' },
+  { text: t('recentlyAddedMedia'), value: 'latestmedia' }
 ]);
 
 const homeSectionModels = Array.from({ length: 10 }, (_, index) =>
