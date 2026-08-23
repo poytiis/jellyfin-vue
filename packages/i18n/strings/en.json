@@ -250,6 +250,8 @@
   "music": "Music",
   "mustBeInRange": "Must be between {{min}} and {{max}}",
   "mustBeNumber": "This field must be a number",
+  "myMedia": "My media",
+  "myMediaSmall": "My media (small)",
   "name": "Name",
   "networkError": "Fatal network error encountered, trying to recover",
   "networking": "Networking",
