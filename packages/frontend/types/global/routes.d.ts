@@ -14,15 +14,11 @@ import type {
   ParamValueZeroOrMore,
   ParamValueZeroOrOne,
 } from 'vue-router'
-import type {
-  _ExtractParamParserType,
-} from 'vue-router/experimental'
 
 declare module 'vue-router' {
   interface TypesConfig {
-    _ParamParsers: {}
-    RouteNamedMap: import('vue-router/auto-routes').RouteNamedMap
-    _RouteFileInfoMap: import('vue-router/auto-routes')._RouteFileInfoMap
+    ParamParsers:
+      | never
   }
 }
 
@@ -164,6 +160,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/settings/home-screen': RouteRecordInfo<
+      '/settings/home-screen',
+      '/settings/home-screen',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/settings/logs-and-activity': RouteRecordInfo<
       '/settings/logs-and-activity',
       '/settings/logs-and-activity',
@@ -231,47 +234,35 @@ declare module 'vue-router/auto-routes' {
         | '/'
       views:
         | never
-      pathParamNames:
-        | never
     }
     'src/pages/artist/[itemId].vue': {
       routes:
         | '/artist/[itemId]'
       views:
         | never
-      pathParamNames:
-        | 'itemId'
     }
     'src/pages/genre/[itemId].vue': {
       routes:
         | '/genre/[itemId]'
       views:
         | never
-      pathParamNames:
-        | 'itemId'
     }
     'src/pages/item/[itemId].vue': {
       routes:
         | '/item/[itemId]'
       views:
         | never
-      pathParamNames:
-        | 'itemId'
     }
     'src/pages/library/[itemId].vue': {
       routes:
         | '/library/[itemId]'
       views:
         | never
-      pathParamNames:
-        | 'itemId'
     }
     'src/pages/metadata.vue': {
       routes:
         | '/metadata'
       views:
-        | never
-      pathParamNames:
         | never
     }
     'src/pages/musicalbum/[itemId].vue': {
@@ -279,23 +270,17 @@ declare module 'vue-router/auto-routes' {
         | '/musicalbum/[itemId]'
       views:
         | never
-      pathParamNames:
-        | 'itemId'
     }
     'src/pages/person/[itemId].vue': {
       routes:
         | '/person/[itemId]'
       views:
         | never
-      pathParamNames:
-        | 'itemId'
     }
     'src/pages/playback/music.vue': {
       routes:
         | '/playback/music'
       views:
-        | never
-      pathParamNames:
         | never
     }
     'src/pages/playback/video.vue': {
@@ -303,15 +288,11 @@ declare module 'vue-router/auto-routes' {
         | '/playback/video'
       views:
         | never
-      pathParamNames:
-        | never
     }
     'src/pages/search.vue': {
       routes:
         | '/search'
       views:
-        | never
-      pathParamNames:
         | never
     }
     'src/pages/series/[itemId].vue': {
@@ -319,15 +300,11 @@ declare module 'vue-router/auto-routes' {
         | '/series/[itemId]'
       views:
         | never
-      pathParamNames:
-        | 'itemId'
     }
     'src/pages/server/add.vue': {
       routes:
         | '/server/add'
       views:
-        | never
-      pathParamNames:
         | never
     }
     'src/pages/server/login.vue': {
@@ -335,15 +312,11 @@ declare module 'vue-router/auto-routes' {
         | '/server/login'
       views:
         | never
-      pathParamNames:
-        | never
     }
     'src/pages/server/select.vue': {
       routes:
         | '/server/select'
       views:
-        | never
-      pathParamNames:
         | never
     }
     'src/pages/settings/index.vue': {
@@ -351,15 +324,11 @@ declare module 'vue-router/auto-routes' {
         | '/settings/'
       views:
         | never
-      pathParamNames:
-        | never
     }
     'src/pages/settings/account.vue': {
       routes:
         | '/settings/account'
       views:
-        | never
-      pathParamNames:
         | never
     }
     'src/pages/settings/apikeys.vue': {
@@ -367,15 +336,17 @@ declare module 'vue-router/auto-routes' {
         | '/settings/apikeys'
       views:
         | never
-      pathParamNames:
-        | never
     }
     'src/pages/settings/devices.vue': {
       routes:
         | '/settings/devices'
       views:
         | never
-      pathParamNames:
+    }
+    'src/pages/settings/home-screen.vue': {
+      routes:
+        | '/settings/home-screen'
+      views:
         | never
     }
     'src/pages/settings/logs-and-activity.vue': {
@@ -383,15 +354,11 @@ declare module 'vue-router/auto-routes' {
         | '/settings/logs-and-activity'
       views:
         | never
-      pathParamNames:
-        | never
     }
     'src/pages/settings/server.vue': {
       routes:
         | '/settings/server'
       views:
-        | never
-      pathParamNames:
         | never
     }
     'src/pages/settings/subtitles.vue': {
@@ -399,15 +366,11 @@ declare module 'vue-router/auto-routes' {
         | '/settings/subtitles'
       views:
         | never
-      pathParamNames:
-        | never
     }
     'src/pages/settings/users/index.vue': {
       routes:
         | '/settings/users/'
       views:
-        | never
-      pathParamNames:
         | never
     }
     'src/pages/settings/users/[id].vue': {
@@ -415,23 +378,17 @@ declare module 'vue-router/auto-routes' {
         | '/settings/users/[id]'
       views:
         | never
-      pathParamNames:
-        | 'id'
     }
     'src/pages/settings/users/new.vue': {
       routes:
         | '/settings/users/new'
       views:
         | never
-      pathParamNames:
-        | never
     }
     'src/pages/wizard.vue': {
       routes:
         | '/wizard'
       views:
-        | never
-      pathParamNames:
         | never
     }
   }
