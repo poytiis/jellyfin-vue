@@ -67,6 +67,42 @@
             <JIcon class="i-mdi:plus-circle-outline" />
           </VBtn>
         </div>
+        <h2 class="uno-mt-8 uno-text-lg">
+          {{ t('libraries') }}
+        </h2>
+        <JDraggableList
+          :items="libraryOrderModels"
+          :item-key="(library: any) => library.id"
+          :options="{ handle: '.library-drag-handle', filter: 'button' }"
+          tag="div"
+          @reorder="reorderLibraries">
+          <template #default="{ item, index }">
+            <div class="library-drag-handle home-section-row uno-mt-2 uno-flex uno-cursor-grab uno-items-center uno-gap-2 uno-rounded uno-px-2 uno-py-1">
+              <JIcon
+                class="i-mdi:drag-vertical uno-flex-none"
+                aria-hidden="true" />
+              <span class="uno-flex-1">{{ item.value }}</span>
+              <VBtn
+                icon
+                size="small"
+                variant="text"
+                :disabled="index === 0"
+                :aria-label="`${t('previous')}: ${item.value}`"
+                @click.stop="moveLibrary(index, index - 1)">
+                <JIcon class="i-mdi:chevron-up" />
+              </VBtn>
+              <VBtn
+                icon
+                size="small"
+                variant="text"
+                :disabled="index === libraryOrderModels.length - 1"
+                :aria-label="`${t('next')}: ${item.value}`"
+                @click.stop="moveLibrary(index, index + 1)">
+                <JIcon class="i-mdi:chevron-down" />
+              </VBtn>
+            </div>
+          </template>
+        </JDraggableList>
       </VCol>
     </template>
   </SettingsPage>
@@ -75,9 +111,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useTranslation } from 'i18next-vue';
+import { getUserViewsApi } from '@jellyfin/sdk/lib/utils/api/user-views-api';
 import { userSettings } from '#/store/settings/user.ts';
+import { useBaseItem } from '#/composables/apis.ts';
+import { orderItemsById } from '#/utils/ordering.ts';
 
 const { t } = useTranslation();
+const { data: views } = await useBaseItem(getUserViewsApi, 'getUserViews')();
 
 const dictionary: Record<string, string> = {
   smalllibrarytiles: t('myMedia'),
@@ -112,6 +152,10 @@ const availableHomeSections = computed(() => {
     .filter(id => !configuredIds.has(id))
     .map(id => ({ id, value: dictionary[id] }));
 });
+const libraryOrderModels = ref(
+  orderItemsById(views.value, userSettings.libraryOrder.value)
+    .flatMap(library => library.Id ? [{ id: library.Id, value: library.Name ?? '' }] : [])
+);
 
 /**
  * Persist the current home section selections and order.
@@ -162,6 +206,34 @@ function addHomeSection(): void {
   homeSectionModels.value.push({ id, value: dictionary[id] });
   newHomeSection.value = undefined;
   updateHomeSections();
+}
+
+/**
+ * Persist the current library order.
+ */
+function updateLibraryOrder(): void {
+  userSettings.libraryOrder.value = libraryOrderModels.value.map(({ id }) => id);
+}
+
+/**
+ * Move a library to its newly selected position.
+ */
+function reorderLibraries({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }): void {
+  const [library] = libraryOrderModels.value.splice(oldIndex, 1);
+
+  if (!library) {
+    return;
+  }
+
+  libraryOrderModels.value.splice(newIndex, 0, library);
+  updateLibraryOrder();
+}
+
+/**
+ * Move a library using the list controls.
+ */
+function moveLibrary(oldIndex: number, newIndex: number): void {
+  reorderLibraries({ oldIndex, newIndex });
 }
 </script>
 
