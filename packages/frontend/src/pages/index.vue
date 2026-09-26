@@ -76,72 +76,58 @@ const latestMediaSections = computed(() => {
   }).filter((i): i is HomeSection => !isNil(i));
 });
 
-const defaultHomeSections = computed<HomeSection[]>(() => {
-  return [
-    /**
-     * Library tiles
-     */
-    {
-      id: 'smalllibrarytiles',
-      title: t('libraries'),
-      libraryId: '',
-      shape: CardShapes.Thumb,
-      type: 'libraries'
-    },
-    {
-      id: 'librarybuttons',
-      title: t('libraries'),
-      libraryId: '',
-      shape: CardShapes.Square,
-      type: 'libraries'
-    },
-    /**
-     * Resume video
-     */
-    {
-      id: 'resumevideo',
-      title: t('continueWatching'),
-      libraryId: '',
-      shape: CardShapes.Thumb,
-      type: 'resumevideo'
-    },
-    /**
-     * Next up
-     */
-    {
-      id: 'nextup',
-      title: t('nextUp'),
-      libraryId: '',
-      shape: CardShapes.Thumb,
-      type: 'nextup'
-    },
-    /**
-     * Latest media
-     */
-    ...latestMediaSections.value
-  ];
-});
-
 /**
  * Resolves a stored home section id to one or more renderable sections.
  */
-function getConfiguredHomeSections(id: string, sectionsById: Map<string, HomeSection>): HomeSection[] {
-  if (id === 'latestmedia') {
-    return latestMediaSections.value;
+function getConfiguredHomeSections(id: string): HomeSection[] {
+  switch (id) {
+    case 'smalllibrarytiles': {
+      return [{
+        id,
+        title: t('libraries'),
+        libraryId: '',
+        shape: CardShapes.Thumb,
+        type: 'libraries'
+      }];
+    }
+    case 'librarybuttons': {
+      return [{
+        id,
+        title: t('libraries'),
+        libraryId: '',
+        shape: CardShapes.Square,
+        type: 'libraries'
+      }];
+    }
+    case 'resume': {
+      return [{
+        id,
+        title: t('continueWatching'),
+        libraryId: '',
+        shape: CardShapes.Thumb,
+        type: 'resumevideo'
+      }];
+    }
+    case 'nextup': {
+      return [{
+        id,
+        title: t('nextUp'),
+        libraryId: '',
+        shape: CardShapes.Thumb,
+        type: 'nextup'
+      }];
+    }
+    case 'latestmedia': {
+      return latestMediaSections.value;
+    }
+    default: {
+      return [];
+    }
   }
-
-  const section = sectionsById.get(id);
-
-  return section ? [section] : [];
 }
 
 const homeSections = computed<HomeSection[]>(() => {
-  const sectionsById = new Map(defaultHomeSections.value.map(section => [section.id, section]));
-  const configuredSections = userSettings.homeSections.value.flatMap(id =>
-    getConfiguredHomeSections(id, sectionsById)
-  );
-
-  return configuredSections.length ? configuredSections : defaultHomeSections.value;
+  return userSettings.homeSections.value.flatMap(id => getConfiguredHomeSections(id));
 });
 
 /**
