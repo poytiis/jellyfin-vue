@@ -22,10 +22,19 @@ const HOME_SECTION_KEYS = [
  */
 
 export type HomeSectionKey = typeof HOME_SECTION_KEYS[number];
-export type UserSettingsState = Record<HomeSectionKey, string>;
+export type UserSettingsState = Record<HomeSectionKey, string> & {
+  libraryOrder: string[];
+};
 
 @sealed
 class UserSettingsStore extends SyncedStore<UserSettingsState, KeysOfUnion<UserSettingsState>> {
+  public readonly libraryOrder = computed({
+    get: () => this._state.value.libraryOrder,
+    set: (newVal: string[]) => {
+      this._state.value.libraryOrder = newVal;
+    }
+  });
+
   public readonly homeSections = computed({
     get: () => HOME_SECTION_KEYS.map(key => this._state.value[key]),
     set: (newVal: string[]) => {
@@ -48,7 +57,8 @@ class UserSettingsStore extends SyncedStore<UserSettingsState, KeysOfUnion<UserS
         homesection6: 'none',
         homesection7: 'none',
         homesection8: 'none',
-        homesection9: 'none'
+        homesection9: 'none',
+        libraryOrder: []
       }),
       resetOnLogout: true,
       persistenceType: 'localStorage'
