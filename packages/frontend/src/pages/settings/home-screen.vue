@@ -11,13 +11,13 @@
         <JDraggableList
           :items="homeSectionModels"
           :item-key="(homeSection: any) => homeSection.id"
-          :options="{ handle: '.home-section-drag-handle' }"
+          :options="{ handle: '.home-section-drag-handle', filter: 'button' }"
           tag="div"
           @reorder="reorderHomeSections">
           <template #default="{ item, index }">
-            <div class="uno-mt-6 uno-flex uno-items-center uno-gap-2">
+            <div class="home-section-drag-handle home-section-row uno-mt-2 uno-flex uno-cursor-grab uno-items-center uno-gap-2 uno-rounded uno-px-2 uno-py-1">
               <JIcon
-                class="home-section-drag-handle i-mdi:drag-horizontal uno-flex-none uno-cursor-grab"
+                class="i-mdi:drag-vertical uno-flex-none"
                 aria-hidden="true" />
               <span class="uno-flex-1">{{ item.value }}</span>
               <VBtn
@@ -27,7 +27,7 @@
                 :disabled="index === 0"
                 :aria-label="`${t('previous')}: ${item.value}`"
                 @click.stop="moveHomeSection(index, index - 1)">
-                <JIcon class="i-mdi:arrow-up" />
+                <JIcon class="i-mdi:chevron-up" />
               </VBtn>
               <VBtn
                 icon
@@ -36,7 +36,7 @@
                 :disabled="index === homeSectionModels.length - 1"
                 :aria-label="`${t('next')}: ${item.value}`"
                 @click.stop="moveHomeSection(index, index + 1)">
-                <JIcon class="i-mdi:arrow-down" />
+                <JIcon class="i-mdi:chevron-down" />
               </VBtn>
               <VBtn
                 icon
@@ -44,7 +44,7 @@
                 variant="text"
                 :aria-label="`${t('delete')}: ${item.value}`"
                 @click.stop="deleteHomeSection(index)">
-                <JIcon class="i-mdi:delete" />
+                <JIcon class="i-mdi:delete-outline" />
               </VBtn>
             </div>
           </template>
@@ -64,7 +64,7 @@
             :disabled="!newHomeSection"
             :aria-label="t('addHomeSection')"
             @click="addHomeSection">
-            <JIcon class="i-mdi:plus" />
+            <JIcon class="i-mdi:plus-circle-outline" />
           </VBtn>
         </div>
       </VCol>
@@ -164,3 +164,15 @@ function addHomeSection(): void {
   updateHomeSections();
 }
 </script>
+
+<style scoped>
+.home-section-row {
+  min-height: 3rem;
+  transition: background-color 150ms ease;
+  user-select: none;
+}
+
+.home-section-row:hover {
+  background-color: rgba(var(--v-theme-on-surface), 0.08);
+}
+</style>

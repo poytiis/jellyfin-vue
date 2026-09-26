@@ -30,7 +30,7 @@ class UserSettingsStore extends SyncedStore<UserSettingsState, KeysOfUnion<UserS
     get: () => HOME_SECTION_KEYS.map(key => this._state.value[key]),
     set: (newVal: string[]) => {
       for (const [index, key] of HOME_SECTION_KEYS.entries()) {
-        this._state.value[key] = newVal[index] ?? '';
+        this._state.value[key] = newVal[index] ?? 'none';
       }
     }
   });
@@ -43,12 +43,12 @@ class UserSettingsStore extends SyncedStore<UserSettingsState, KeysOfUnion<UserS
         homesection1: 'resume',
         homesection2: 'nextup',
         homesection3: 'latestmedia',
-        homesection4: '',
-        homesection5: '',
-        homesection6: '',
-        homesection7: '',
-        homesection8: '',
-        homesection9: ''
+        homesection4: 'none',
+        homesection5: 'none',
+        homesection6: 'none',
+        homesection7: 'none',
+        homesection8: 'none',
+        homesection9: 'none'
       }),
       resetOnLogout: true,
       persistenceType: 'localStorage'
