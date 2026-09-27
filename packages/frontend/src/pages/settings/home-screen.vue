@@ -8,6 +8,9 @@
       <VCol
         md="6"
         class="uno-pb-4 uno-pt-0">
+        <h2 class="uno-text-lg">
+          {{ t('homeScreenSections') }}
+        </h2>
         <JDraggableList
           :items="homeSectionModels"
           :item-key="(homeSection: any) => homeSection.id"
@@ -17,7 +20,10 @@
           <template #default="{ item, index }">
             <div class="home-section-drag-handle home-section-row uno-mt-2 uno-flex uno-cursor-grab uno-items-center uno-gap-2 uno-rounded uno-px-2 uno-py-1">
               <JIcon
-                class="i-mdi:drag-vertical uno-flex-none"
+                class="i-mdi:folder uno-flex-none"
+                aria-hidden="true" />
+              <JIcon
+                :class="[item.icon, 'uno-flex-none']"
                 aria-hidden="true" />
               <span class="uno-flex-1">{{ item.value }}</span>
               <VBtn
@@ -25,7 +31,6 @@
                 size="small"
                 variant="text"
                 :disabled="index === 0"
-                :aria-label="`${t('previous')}: ${item.value}`"
                 @click.stop="moveHomeSection(index, index - 1)">
                 <JIcon class="i-mdi:chevron-up" />
               </VBtn>
@@ -34,7 +39,6 @@
                 size="small"
                 variant="text"
                 :disabled="index === homeSectionModels.length - 1"
-                :aria-label="`${t('next')}: ${item.value}`"
                 @click.stop="moveHomeSection(index, index + 1)">
                 <JIcon class="i-mdi:chevron-down" />
               </VBtn>
@@ -42,7 +46,6 @@
                 icon
                 size="small"
                 variant="text"
-                :aria-label="`${t('delete')}: ${item.value}`"
                 @click.stop="deleteHomeSection(index)">
                 <JIcon class="i-mdi:delete-outline" />
               </VBtn>
@@ -62,7 +65,6 @@
           <VBtn
             icon
             :disabled="!newHomeSection"
-            :aria-label="t('addHomeSection')"
             @click="addHomeSection">
             <JIcon class="i-mdi:plus-circle-outline" />
           </VBtn>
@@ -79,15 +81,14 @@
           <template #default="{ item, index }">
             <div class="library-drag-handle home-section-row uno-mt-2 uno-flex uno-cursor-grab uno-items-center uno-gap-2 uno-rounded uno-px-2 uno-py-1">
               <JIcon
-                class="i-mdi:drag-vertical uno-flex-none"
+                :class="item.icon"
                 aria-hidden="true" />
-              <span class="uno-flex-1">{{ item.value }}</span>
+              <span class="uno-ml-2 uno-flex-1">{{ item.value }}</span>
               <VBtn
                 icon
                 size="small"
                 variant="text"
                 :disabled="index === 0"
-                :aria-label="`${t('previous')}: ${item.value}`"
                 @click.stop="moveLibrary(index, index - 1)">
                 <JIcon class="i-mdi:chevron-up" />
               </VBtn>
@@ -96,7 +97,6 @@
                 size="small"
                 variant="text"
                 :disabled="index === libraryOrderModels.length - 1"
-                :aria-label="`${t('next')}: ${item.value}`"
                 @click.stop="moveLibrary(index, index + 1)">
                 <JIcon class="i-mdi:chevron-down" />
               </VBtn>
@@ -114,6 +114,7 @@ import { useTranslation } from 'i18next-vue';
 import { getUserViewsApi } from '@jellyfin/sdk/lib/utils/api/user-views-api';
 import { userSettings } from '#/store/settings/user.ts';
 import { useBaseItem } from '#/composables/apis.ts';
+import { getLibraryIcon } from '#/utils/items.ts';
 import { orderItemsById } from '#/utils/ordering.ts';
 
 const { t } = useTranslation();
@@ -154,7 +155,13 @@ const availableHomeSections = computed(() => {
 });
 const libraryOrderModels = ref(
   orderItemsById(views.value, userSettings.libraryOrder.value)
-    .flatMap(library => library.Id ? [{ id: library.Id, value: library.Name ?? '' }] : [])
+    .flatMap(library => library.Id
+      ? [{
+          id: library.Id,
+          icon: getLibraryIcon(library.CollectionType),
+          value: library.Name ?? ''
+        }]
+      : [])
 );
 
 /**

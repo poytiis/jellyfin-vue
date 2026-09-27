@@ -100,7 +100,6 @@ export abstract class SyncedStore<
         const displayPreferences = await this._fetchDisplayPreferences();
 
         displayPreferences.CustomPrefs = newPrefs;
-        console.log(newPrefs);
         await this._updateDisplayPreferences(displayPreferences);
       } catch {
         useSnackbar(i18next.t('failedSyncingUserSettings'), 'error');

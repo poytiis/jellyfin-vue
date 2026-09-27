@@ -168,7 +168,6 @@ declare module 'vue' {
     VTextField: typeof import('vuetify/components')['VTextField']
     VToolbar: typeof import('vuetify/components')['VToolbar']
     VToolbarTitle: typeof import('vuetify/components')['VToolbarTitle']
-    VTooltip: typeof import('vuetify/components')['VTooltip']
     VWindow: typeof import('vuetify/components')['VWindow']
     VWindowItem: typeof import('vuetify/components')['VWindowItem']
     WatchedIndicator: typeof import('./../../src/components/Item/WatchedIndicator.vue')['default']
