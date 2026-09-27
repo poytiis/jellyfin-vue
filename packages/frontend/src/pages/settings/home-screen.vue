@@ -140,7 +140,7 @@ const addableHomeSectionIds = [
   'latestmedia'
 ] as const;
 
-const homeSectionModels = ref(
+const homeSectionModels = computed(() =>
   userSettings.homeSections.value
     .filter(value => value !== '' && value !== 'none')
     .map(value => ({ value: dictionary[value], id: value }))
@@ -153,7 +153,7 @@ const availableHomeSections = computed(() => {
     .filter(id => !configuredIds.has(id))
     .map(id => ({ id, value: dictionary[id] }));
 });
-const libraryOrderModels = ref(
+const libraryOrderModels = computed(() =>
   orderItemsById(views.value, userSettings.libraryOrder.value)
     .flatMap(library => library.Id
       ? [{
@@ -165,24 +165,18 @@ const libraryOrderModels = ref(
 );
 
 /**
- * Persist the current home section selections and order.
- */
-function updateHomeSections(): void {
-  userSettings.homeSections.value = homeSectionModels.value.map(({ id }) => id);
-}
-
-/**
  * Move a home section to its newly selected position.
  */
 function reorderHomeSections({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }): void {
-  const [homeSection] = homeSectionModels.value.splice(oldIndex, 1);
+  const ids = homeSectionModels.value.map(({ id }) => id);
+  const [moved] = ids.splice(oldIndex, 1);
 
-  if (!homeSection) {
+  if (!moved) {
     return;
   }
 
-  homeSectionModels.value.splice(newIndex, 0, homeSection);
-  updateHomeSections();
+  ids.splice(newIndex, 0, moved);
+  userSettings.homeSections.value = ids;
 }
 
 /**
@@ -196,8 +190,10 @@ function moveHomeSection(oldIndex: number, newIndex: number): void {
  * Remove a section from the home screen.
  */
 function deleteHomeSection(index: number): void {
-  homeSectionModels.value.splice(index, 1);
-  updateHomeSections();
+  userSettings.homeSections.value
+    = homeSectionModels.value
+      .filter((_, currentIndex) => currentIndex !== index)
+      .map(({ id }) => id);
 }
 
 /**
@@ -210,30 +206,26 @@ function addHomeSection(): void {
     return;
   }
 
-  homeSectionModels.value.push({ id, value: dictionary[id] });
+  userSettings.homeSections.value = [
+    ...homeSectionModels.value.map(section => section.id),
+    id
+  ];
   newHomeSection.value = undefined;
-  updateHomeSections();
-}
-
-/**
- * Persist the current library order.
- */
-function updateLibraryOrder(): void {
-  userSettings.libraryOrder.value = libraryOrderModels.value.map(({ id }) => id);
 }
 
 /**
  * Move a library to its newly selected position.
  */
 function reorderLibraries({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }): void {
-  const [library] = libraryOrderModels.value.splice(oldIndex, 1);
+  const ids = libraryOrderModels.value.map(({ id }) => id);
+  const [moved] = ids.splice(oldIndex, 1);
 
-  if (!library) {
+  if (!moved) {
     return;
   }
 
-  libraryOrderModels.value.splice(newIndex, 0, library);
-  updateLibraryOrder();
+  ids.splice(newIndex, 0, moved);
+  userSettings.libraryOrder.value = ids;
 }
 
 /**
