@@ -38,6 +38,7 @@ import { isNil } from '@jellyfin-vue/shared/validation';
 import { CardShapes, fetchIndexPage, getShapeFromCollectionType } from '#/utils/items.ts';
 import { usePageTitle } from '#/composables/page-title.ts';
 import { userSettings } from '#/store/settings/user.ts';
+import { orderItemsById } from '#/utils/ordering.ts';
 
 definePage({
   meta: {
@@ -102,7 +103,7 @@ function getConfiguredHomeSections(id: string): HomeSection[] {
         type: 'libraries'
       }];
     }
-    case 'resume': {
+    case 'resumevideo': {
       return [{
         id,
         title: t('continueWatching'),
@@ -139,7 +140,7 @@ const homeSections = computed<HomeSection[]>(() => {
 function getHomeSectionContent(section: HomeSection): BaseItemDto[] {
   switch (section.type) {
     case 'libraries': {
-      return views.value;
+      return orderItemsById(views.value, userSettings.libraryOrder.value);
     }
     case 'resumevideo': {
       return resumeVideo.value;

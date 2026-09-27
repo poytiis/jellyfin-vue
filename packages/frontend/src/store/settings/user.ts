@@ -49,7 +49,7 @@ class UserSettingsStore extends SyncedStore<UserSettingsState, KeysOfUnion<UserS
       storeKey: 'userSettings',
       defaultState: () => ({
         homesection0: 'smalllibrarytiles',
-        homesection1: 'resume',
+        homesection1: 'resumevideo',
         homesection2: 'nextup',
         homesection3: 'latestmedia',
         homesection4: 'none',
@@ -58,7 +58,7 @@ class UserSettingsStore extends SyncedStore<UserSettingsState, KeysOfUnion<UserS
         homesection7: 'none',
         homesection8: 'none',
         homesection9: 'none',
-        libraryOrder: []
+        libraryOrder: [] as string[]
       }),
       resetOnLogout: true,
       persistenceType: 'localStorage'
