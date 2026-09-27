@@ -147,6 +147,7 @@
   "hide": "Hide",
   "home": "Home",
   "homeScreen": "Home screen",
+  "homeScreenSections": "Home screen sections",
   "homeScreenSettingsDescription": "Configure your home sections and home screen layout",
   "identify": "Identify",
   "identifyConfirmChanges": "Are you sure do you want to change '{{originalItem}}' with '{{newIdentifiedItem}}'?",
