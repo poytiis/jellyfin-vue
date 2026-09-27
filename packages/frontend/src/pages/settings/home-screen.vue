@@ -125,7 +125,7 @@ const dictionary: Record<string, string> = {
   librarybuttons: t('myMediaSmall'),
   latestmedia: t('recentlyAddedMedia'),
   nextup: t('nextUp'),
-  resume: t('continueWatching'),
+  resumevideo: t('continueWatching'),
   livetv: t('liveTv'),
   resumeaudio: t('continueListening'),
   resumebook: t('continueReading'),
@@ -135,7 +135,7 @@ const dictionary: Record<string, string> = {
 const addableHomeSectionIds = [
   'smalllibrarytiles',
   'librarybuttons',
-  'resume',
+  'resumevideo',
   'nextup',
   'latestmedia'
 ] as const;

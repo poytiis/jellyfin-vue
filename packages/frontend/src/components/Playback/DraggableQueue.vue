@@ -10,7 +10,33 @@
           :subtitle="getArtists(item)"
           class="uno-cursor-grab"
           :class="{ 'text-primary font-weight-bold': isPlaying(index) }"
-          @click="playbackManager.currentItemIndex.value = index" />
+          @click="playbackManager.currentItemIndex.value = index">
+          <template #prepend>
+            <VListItemAction
+              :key="index"
+              class="uno-min-w-10"
+              start>
+              <template v-if="!isHovering">
+                {{ index + 1 }}
+              </template>
+              <JIcon
+                v-else
+                class="i-mdi:drag-horizontal" />
+            </VListItemAction>
+            <VAvatar>
+              <BlurhashImage :item="item" />
+            </VAvatar>
+          </template>
+          <template #append>
+            <LikeButton
+              v-hide="isPlaying(index)"
+              :item="item" />
+            <ItemMenu
+              v-hide="isPlaying(index)"
+              :item="item"
+              queue />
+          </template>
+        </VListItem>
       </JHover>
     </template>
   </JDraggableList>
