@@ -22,9 +22,6 @@
               <JIcon
                 class="i-mdi:folder uno-flex-none"
                 aria-hidden="true" />
-              <JIcon
-                :class="[item.icon, 'uno-flex-none']"
-                aria-hidden="true" />
               <span class="uno-flex-1">{{ item.value }}</span>
               <VBtn
                 icon
@@ -73,7 +70,7 @@
           {{ t('libraries') }}
         </h2>
         <JDraggableList
-          :items="libraryOrderModels"
+          :items="orderedLibraryModels"
           :item-key="(library: any) => library.id"
           :options="{ handle: '.library-drag-handle', filter: 'button' }"
           tag="div"
@@ -96,7 +93,7 @@
                 icon
                 size="small"
                 variant="text"
-                :disabled="index === libraryOrderModels.length - 1"
+                :disabled="index === orderedLibraryModels.length - 1"
                 @click.stop="moveLibrary(index, index + 1)">
                 <JIcon class="i-mdi:chevron-down" />
               </VBtn>
@@ -120,7 +117,7 @@ import { orderItemsById } from '#/utils/ordering.ts';
 const { t } = useTranslation();
 const { data: views } = await useBaseItem(getUserViewsApi, 'getUserViews')();
 
-const dictionary: Record<string, string> = {
+const homeSectionLabels: Record<string, string> = {
   smalllibrarytiles: t('myMedia'),
   librarybuttons: t('myMediaSmall'),
   latestmedia: t('recentlyAddedMedia'),
@@ -143,7 +140,7 @@ const addableHomeSectionIds = [
 const homeSectionModels = computed(() =>
   userSettings.homeSections.value
     .filter(value => value !== '' && value !== 'none')
-    .map(value => ({ value: dictionary[value], id: value }))
+    .map(value => ({ value: homeSectionLabels[value], id: value }))
 );
 const newHomeSection = ref<string>();
 const availableHomeSections = computed(() => {
@@ -151,9 +148,9 @@ const availableHomeSections = computed(() => {
 
   return addableHomeSectionIds
     .filter(id => !configuredIds.has(id))
-    .map(id => ({ id, value: dictionary[id] }));
+    .map(id => ({ id, value: homeSectionLabels[id] }));
 });
-const libraryOrderModels = computed(() =>
+const orderedLibraryModels = computed(() =>
   orderItemsById(views.value, userSettings.libraryOrder.value)
     .flatMap(library => library.Id
       ? [{
@@ -217,7 +214,7 @@ function addHomeSection(): void {
  * Move a library to its newly selected position.
  */
 function reorderLibraries({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }): void {
-  const ids = libraryOrderModels.value.map(({ id }) => id);
+  const ids = orderedLibraryModels.value.map(({ id }) => id);
   const [moved] = ids.splice(oldIndex, 1);
 
   if (!moved) {
